@@ -30,6 +30,31 @@ class OrderRepository extends GetxController {
     }
   }
 
+  // Get all orders for a specific user
+  Future<List<OrderModel>> fetchOrdersForUser(String userId) async {
+    try {
+      final result =
+          await _db.collection('Users').doc(userId).collection('Orders').get();
+      return result.docs
+          .map((documentSnapshot) => OrderModel.fromSnapshot(documentSnapshot))
+          .toList();
+    } catch (e) {
+      throw 'Something went wrong while fetching orders for the selected user.';
+    }
+  }
+
+  // Get all orders across all users for admin viewing
+  Future<List<OrderModel>> fetchAllOrders() async {
+    try {
+      final result = await _db.collectionGroup('Orders').get();
+      return result.docs
+          .map((documentSnapshot) => OrderModel.fromSnapshot(documentSnapshot))
+          .toList();
+    } catch (e) {
+      throw 'Something went wrong while fetching all orders. Please try again later.';
+    }
+  }
+
   // Get single order by ID
   Future<OrderModel> getOrderById(String orderId) async {
     try {
@@ -90,8 +115,10 @@ class OrderRepository extends GetxController {
       final updateData = <String, dynamic>{
         'status': newStatus.toString(),
         'trackingNumber': trackingNumber,
-        'shippedDate': shippedDate != null ? Timestamp.fromDate(shippedDate) : null,
-        'deliveredDate': deliveredDate != null ? Timestamp.fromDate(deliveredDate) : null,
+        'shippedDate':
+            shippedDate != null ? Timestamp.fromDate(shippedDate) : null,
+        'deliveredDate':
+            deliveredDate != null ? Timestamp.fromDate(deliveredDate) : null,
       };
 
       await _db
@@ -102,6 +129,36 @@ class OrderRepository extends GetxController {
           .update(updateData);
     } catch (e) {
       throw 'Failed to update order status: $e';
+    }
+  }
+
+  // Admin: update order status for a specific user (doesn't rely on authenticated uid)
+  Future<void> adminUpdateOrderStatus(
+    String userId,
+    String orderId,
+    OrderStatus newStatus, {
+    String? trackingNumber,
+    DateTime? shippedDate,
+    DateTime? deliveredDate,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'status': newStatus.toString(),
+        'trackingNumber': trackingNumber,
+        'shippedDate':
+            shippedDate != null ? Timestamp.fromDate(shippedDate) : null,
+        'deliveredDate':
+            deliveredDate != null ? Timestamp.fromDate(deliveredDate) : null,
+      };
+
+      await _db
+          .collection('Users')
+          .doc(userId)
+          .collection('Orders')
+          .doc(orderId)
+          .update(updateData);
+    } catch (e) {
+      throw 'Admin failed to update order status: $e';
     }
   }
 
@@ -160,4 +217,3 @@ class OrderRepository extends GetxController {
     }
   }
 }
-

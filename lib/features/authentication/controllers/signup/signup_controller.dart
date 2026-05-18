@@ -3,6 +3,7 @@ import 'package:flutterproject/common/widgets/loaders/loaders.dart';
 import 'package:flutterproject/data/repositories/authentication/authentication_repository.dart';
 import 'package:flutterproject/data/repositories/user/user_repository.dart';
 import 'package:flutterproject/features/authentication/models/user_model.dart';
+import 'package:flutterproject/utils/constants/enums.dart';
 import 'package:flutterproject/features/authentication/screens/signup/verify_email.dart';
 import 'package:flutterproject/utils/constants/image_strings.dart';
 import 'package:flutterproject/utils/netowrk/network_manager.dart';
@@ -94,6 +95,7 @@ class SignupController extends GetxController {
         email: email.text.trim(),
         phoneNumber: phoneNumber.text.trim(),
         profilePicture: '',
+        role: UserRole.user,
       );
 
       //remove loader

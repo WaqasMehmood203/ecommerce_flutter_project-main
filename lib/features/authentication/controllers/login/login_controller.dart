@@ -7,6 +7,7 @@ import 'package:flutterproject/utils/netowrk/network_manager.dart';
 import 'package:flutterproject/utils/popup/full_screen_loader.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutterproject/features/admin/screens/admin_navigation_menu.dart';
 
 class LoginController extends GetxController {
   // variable
@@ -54,6 +55,13 @@ class LoginController extends GetxController {
         localStorage.write('REMEMBER_ME_PASSWORD', password.text.trim());
       }
 
+      // Hardcoded admin login (bypass Firebase)
+      if (email.text.trim() == '2304.a.rehman@gmail.com' &&
+          password.text.trim() == 'Admin@123') {
+        AFullScreenLoader.stopLoading();
+        Get.offAll(() => const AdminNavigationMenu());
+        return;
+      }
       //login user using email and password authentication
 
       // ignore: unused_local_variable

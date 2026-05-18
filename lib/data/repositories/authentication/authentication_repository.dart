@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutterproject/data/repositories/user/user_repository.dart';
+import 'package:flutterproject/features/admin/screens/admin_navigation_menu.dart';
+import 'package:flutterproject/utils/constants/enums.dart';
 import 'package:flutterproject/features/authentication/screens/login/login.dart';
 import 'package:flutterproject/features/authentication/screens/onboarding/onboarding.dart';
 import 'package:flutterproject/features/authentication/screens/signup/verify_email.dart';
@@ -45,6 +47,17 @@ class AuthenticationRepository extends GetxController {
       if (user.emailVerified) {
         // initialize user specific storage
         await ALocalStorage.init(user.uid);
+
+        try {
+          final userRepository = Get.put(UserRepository());
+          final userModel = await userRepository.fetchUserDetails();
+          if (userModel.role == UserRole.admin) {
+            Get.offAll(() => const AdminNavigationMenu());
+            return;
+          }
+        } catch (_) {
+          // ignore and continue with normal user navigation
+        }
 
         // if the users email is verified , navigate to the main navigation menu
         Get.offAll(() => const NavigationMenu());

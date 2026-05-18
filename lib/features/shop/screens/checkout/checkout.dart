@@ -9,7 +9,6 @@ import 'package:flutterproject/features/shop/screens/cart/widgets/cart_items.dar
 import 'package:flutterproject/features/shop/screens/checkout/widgets/billing_address_section.dart';
 import 'package:flutterproject/features/shop/screens/checkout/widgets/billing_amount_section.dart';
 import 'package:flutterproject/features/shop/screens/checkout/widgets/billing_payment_section.dart';
-import 'package:flutterproject/features/shop/screens/checkout/widgets/coupon.dart';
 import 'package:flutterproject/utils/constants/colors.dart';
 import 'package:flutterproject/utils/constants/sizes.dart';
 import 'package:flutterproject/utils/helpers/helper_functions.dart';
@@ -18,7 +17,6 @@ import 'package:get/get.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +39,6 @@ class CheckoutScreen extends StatelessWidget {
               ///Items in cart
               const ACartItems(showAddRemoveButtons: false),
 
-              const SizedBox(height: Asizes.spaceBtwSections),
-
-              //Coupon TextField
-              ACouponCode(dark: dark),
               const SizedBox(height: Asizes.spaceBtwSections),
 
               //Billing Section
@@ -97,14 +91,16 @@ class CheckoutScreen extends StatelessWidget {
                 return;
               }
               // Validate address
-              if (orderController.addressController.selectedAddress.value.id.isEmpty) {
+              if (orderController
+                  .addressController.selectedAddress.value.id.isEmpty) {
                 ALoaders.warningSnackBar(
                     title: 'No Address Selected',
                     message: 'Please select a shipping address to proceed.');
                 return;
               }
               // Validate payment method
-              if (orderController.checkoutController.selectedPaymentMethod.value.name.isEmpty) {
+              if (orderController.checkoutController.selectedPaymentMethod.value
+                  .name.isEmpty) {
                 ALoaders.warningSnackBar(
                     title: 'No Payment Method',
                     message: 'Please select a payment method to proceed.');

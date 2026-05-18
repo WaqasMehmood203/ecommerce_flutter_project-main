@@ -4,6 +4,7 @@ import 'package:flutterproject/common/widgets/loaders/loaders.dart';
 import 'package:flutterproject/data/repositories/authentication/authentication_repository.dart';
 import 'package:flutterproject/data/repositories/user/user_repository.dart';
 import 'package:flutterproject/features/authentication/models/user_model.dart';
+import 'package:flutterproject/utils/constants/enums.dart';
 import 'package:flutterproject/features/authentication/screens/login/login.dart';
 import 'package:flutterproject/features/personalization/screens/profile/widgets/re_authenticate_user_login_form.dart';
 import 'package:flutterproject/utils/constants/image_strings.dart';
@@ -71,6 +72,7 @@ class UserController extends GetxController {
             email: userCredentials.user!.email ?? '',
             phoneNumber: userCredentials.user!.phoneNumber ?? '',
             profilePicture: userCredentials.user!.photoURL ?? '',
+            role: UserRole.user,
           );
 
           //save user record

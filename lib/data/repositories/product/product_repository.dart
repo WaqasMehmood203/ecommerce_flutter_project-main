@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutterproject/features/shop/models/product_model.dart';
 import 'package:flutterproject/utils/exceptions/firebase_exceptions.dart';
 import 'package:flutterproject/utils/exceptions/platform_exceptions.dart';
@@ -89,14 +92,14 @@ class ProductRepository extends GetxController {
     try {
       final querySnapshot = limit == -1
           ? await _db
-                .collection('products')
-                .where('Brand.Id', isEqualTo: brandId)
-                .get()
+              .collection('products')
+              .where('Brand.Id', isEqualTo: brandId)
+              .get()
           : await _db
-                .collection('products')
-                .where('Brand.Id', isEqualTo: brandId)
-                .limit(limit)
-                .get();
+              .collection('products')
+              .where('Brand.Id', isEqualTo: brandId)
+              .limit(limit)
+              .get();
       final products = querySnapshot.docs
           .map((doc) => ProductModel.fromSnapshot(doc))
           .toList();
@@ -118,14 +121,14 @@ class ProductRepository extends GetxController {
       // Query to get all documents where productId matches the provided categoryId and fetch limited or unlimited based on limit
       QuerySnapshot productCategoryQuery = limit == -1
           ? await _db
-                .collection('ProductCategory')
-                .where('categoryId', isEqualTo: categoryId)
-                .get()
+              .collection('ProductCategory')
+              .where('categoryId', isEqualTo: categoryId)
+              .get()
           : await _db
-                .collection('ProductCategory')
-                .where('categoryId', isEqualTo: categoryId)
-                .limit(limit)
-                .get();
+              .collection('ProductCategory')
+              .where('categoryId', isEqualTo: categoryId)
+              .limit(limit)
+              .get();
       //extract productsIds from the documents
       List<String> productIds = productCategoryQuery.docs
           .map((doc) => doc['productId'] as String)
@@ -179,4 +182,74 @@ class ProductRepository extends GetxController {
   }
 
   // upload dummy data to the cloud firebase
+
+  /// Fetch all products
+  Future<List<ProductModel>> getAllProducts() async {
+    try {
+      final snapshot = await _db.collection('products').get();
+      return snapshot.docs.map((e) => ProductModel.fromSnapshot(e)).toList();
+    } on FirebaseException catch (e) {
+      throw AFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw APlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong! Please try again';
+    }
+  }
+
+  /// Create a new product document
+  Future<void> createProduct(ProductModel product) async {
+    try {
+      await _db.collection('products').add(product.toJson());
+    } on FirebaseException catch (e) {
+      throw AFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw APlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong! Please try again';
+    }
+  }
+
+  /// Update existing product fields
+  Future<void> updateProduct(
+      String productId, Map<String, dynamic> json) async {
+    try {
+      await _db.collection('products').doc(productId).update(json);
+    } on FirebaseException catch (e) {
+      throw AFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw APlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong! Please try again';
+    }
+  }
+
+  /// Delete a product document
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _db.collection('products').doc(productId).delete();
+    } on FirebaseException catch (e) {
+      throw AFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw APlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong! Please try again';
+    }
+  }
+
+  /// Upload an image for a product and return its download URL
+  Future<String> uploadProductImage(String path, XFile image) async {
+    try {
+      final ref = FirebaseStorage.instance.ref(path).child(image.name);
+      await ref.putFile(File(image.path));
+      final url = await ref.getDownloadURL();
+      return url;
+    } on FirebaseException catch (e) {
+      throw AFirebaseException(e.code).message;
+    } on PlatformException catch (e) {
+      throw APlatformException(e.code).message;
+    } catch (e) {
+      throw 'Something went wrong,Please try again';
+    }
+  }
 }

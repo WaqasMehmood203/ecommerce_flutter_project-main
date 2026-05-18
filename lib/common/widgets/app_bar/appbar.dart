@@ -4,6 +4,8 @@ import 'package:flutterproject/utils/constants/sizes.dart';
 import 'package:flutterproject/utils/device/device_utility.dart';
 import 'package:flutterproject/utils/helpers/helper_functions.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:get/get.dart';
+import 'package:flutterproject/features/personalization/controllers/theme_controller.dart';
 
 class AAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AAppBar({
@@ -24,6 +26,15 @@ class AAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final dark = AHelperFunctions.isDarkMode(context);
+    final themeController = Get.put(ThemeController());
+    final themeToggle = Obx(() {
+      final isDark = themeController.themeMode.value == ThemeMode.dark;
+      return IconButton(
+        onPressed: () => themeController.toggleTheme(),
+        icon: Icon(isDark ? Icons.nightlight_round : Icons.wb_sunny),
+        color: isDark ? AColors.white : AColors.dark,
+      );
+    });
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Asizes.md),
       child: AppBar(
@@ -46,7 +57,10 @@ class AAppBar extends StatelessWidget implements PreferredSizeWidget {
                   )
                 : null,
         title: title,
-        actions: actions,
+        actions: [
+          ...?actions,
+          themeToggle,
+        ],
       ),
     );
   }

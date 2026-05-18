@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterproject/features/authentication/models/user_model.dart';
+import 'package:flutterproject/utils/constants/enums.dart';
 import 'package:flutterproject/features/shop/models/cart_item_model.dart';
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
       email: 'test@example.com',
       phoneNumber: '03001234567',
       profilePicture: 'https://example.com/p.png',
+      role: UserRole.user,
     );
 
     final json = user.toJson();

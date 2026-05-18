@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutterproject/utils/constants/enums.dart';
 import 'package:flutterproject/utils/formatters/formatter.dart';
 
 class UserModel {
@@ -10,6 +11,9 @@ class UserModel {
   final String email;
   String phoneNumber;
   String profilePicture;
+  final UserRole role;
+
+  bool get isAdmin => role == UserRole.admin;
 
   // Constructor for UserModel
   UserModel({
@@ -20,6 +24,7 @@ class UserModel {
     required this.email,
     required this.phoneNumber,
     required this.profilePicture,
+    required this.role,
   });
 
   /// Helper function to get the full name.
@@ -53,6 +58,7 @@ class UserModel {
         email: '',
         phoneNumber: '',
         profilePicture: '',
+        role: UserRole.user,
       );
 
   /// Convert model to JSON structure for storing data in Firebase
@@ -64,6 +70,7 @@ class UserModel {
       'Email': email,
       'PhoneNumber': phoneNumber,
       'ProfilePicture': profilePicture,
+      'Role': role.value,
     };
   }
 
@@ -80,6 +87,7 @@ class UserModel {
         email: data["Email"] ?? '',
         phoneNumber: data["PhoneNumber"] ?? '',
         profilePicture: data["ProfilePicture"] ?? '',
+        role: UserRoleExtension.fromString(data['Role'] as String?),
       );
     } else {
       // Handle null data

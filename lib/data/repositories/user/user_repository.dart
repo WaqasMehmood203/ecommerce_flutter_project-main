@@ -63,6 +63,32 @@ class UserRepository extends GetxController {
     }
   }
 
+  //Function to fetch all user records from firestore
+
+  Future<List<UserModel>> fetchAllUsers() async {
+    try {
+      final result = await _db.collection('Users').get();
+      return result.docs
+          .map((documentSnapshot) => UserModel.fromSnapshot(documentSnapshot))
+          .toList();
+    } catch (e) {
+      throw 'Something went wrong while fetching users. Please try again later.';
+    }
+  }
+
+  //Function to fetch a single user by user ID
+  Future<UserModel> fetchUserById(String userId) async {
+    try {
+      final documentSnapshot = await _db.collection('Users').doc(userId).get();
+      if (documentSnapshot.exists) {
+        return UserModel.fromSnapshot(documentSnapshot);
+      }
+      return UserModel.empty();
+    } catch (e) {
+      throw 'Something went wrong while fetching user details.';
+    }
+  }
+
   //Function to update user data in firestore
 
   Future<void> updateUserDetails(UserModel updatedUser) async {
@@ -131,10 +157,9 @@ class UserRepository extends GetxController {
 
   // function to upload image
 
-    ///upload any image
+  ///upload any image
   Future<String> uploadImage(String path, XFile image) async {
-    try{
-
+    try {
       final ref = FirebaseStorage.instance.ref(path).child(image.name);
       await ref.putFile(File(image.path));
       final url = await ref.getDownloadURL();
