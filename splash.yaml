@@ -1,0 +1,23 @@
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#000000"
+  image: assets\logos\logo_white.png
+  image_dark: assets\logos\logo_dark.png
+  android: true
+  ios: true
+  web: true
+  android_gravity: center # Optional: Adjust image alignment
+  ios_content_mode: center # Optional: Adjust content mode
+
+
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#272727"
+    image: assets\logos\logo_white.png
+    image_dark: assets\logos\logo_dark.png
+    android_gravity: center # Optional: Adjust image alignment
+    ios_content_mode: center # Optional: Adjust content mode
+
+  # web: false
+  # web_image: assets/logos/logo_white.png
+  
